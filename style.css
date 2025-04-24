@@ -138,8 +138,8 @@ header {
 
 }
 .Logo {
-    width: 100px;
-    font-size: 2em;
+    width: fit-content;
+    font-size: 20px;
     user-select: none;
 }
 
