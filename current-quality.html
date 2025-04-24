@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Current Quality</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    header {
+      position: fixed;
+      top: 0px;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 99;
+    }
+
+    .btn-back {
+      padding: 8px 16px;
+      background-color: #fa4747;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #000000;
+      transition: background 0.3s ease;
+    }
+
+    .btn-back:hover {
+      background: #e3f2fd;
+    }
+
+    .chart-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 100px;
+      margin-left: 40px;
+      margin-right: 40px;
+    }
+
+    .chart-card {
+      background: rgb(201, 232, 197);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-card h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .loading {
+      text-align: center;
+      margin: 20px;
+      font-size: 18px;
+      color: #555;
+    }
+
+    #last-update-container {
+      position: fixed;
+      top: 10px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #333;
+      z-index: 98;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background-color: red;
+    }
+
+    .blinking {
+      animation: blink 1s infinite;
+      background-color: green !important;
+    }
+
+    .error {
+      background-color: yellow !important;
+      animation: none !important;
+    }
+
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0.2; }
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .styled-table th,
+    .styled-table td {
+      padding: 8px 12px;
+      border: 1px solid #aaa;
+      text-align: center;
+    }
+
+    .quality-overview {
+      display: flex;
+      gap: 40px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 800px) {
+      .quality-overview {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Current Quality</h1>
+  <a href="home.html">
+    <button class="btn-back">⬅ Back</button>
+  </a>
+</header>
+
+<div id="last-update-container">
+  <div class="status-dot" id="statusDot" title="Idle: Waiting for next update"></div>
+  <div id="last-update">Last updated: --</div>
+</div>
+
+<div class="loading" id="loading">Loading charts...</div>
+
+<div class="chart-section" id="charts" style="display: none;">
+
+  <!-- Quality Pie + Table -->
+  <div class="chart-card quality-overview">
+    <div style="flex: 1;">
+      <h2>Quality Overview</h2>
+      <canvas id="qualityChart" height="280"></canvas>
+    </div>
+    <div style="flex: 1;">
+      <h2>Weight by Quality</h2>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Quality</th>
+            <th>Weight (kg)</th>
+          </tr>
+        </thead>
+        <tbody id="qualityWeightTableBody">
+          <tr style="color: #16EEDC; font-weight: bold;"><td>Q1</td><td id="wQ1">-</td></tr>
+          <tr style="color: #049C0C; font-weight: bold;"><td>Q2</td><td id="wQ2">-</td></tr>
+          <tr style="color: #7836F4; font-weight: bold;"><td>Q3</td><td id="wQ3">-</td></tr>
+          <tr style="color: #F4368F; font-weight: bold;"><td>Q4</td><td id="wQ4">-</td></tr>
+          <tr style="color: #3672F4; font-weight: bold;"><td>Q5</td><td id="wQ5">-</td></tr>
+        </tbody>
+        
+        
+      </table>
+    </div>
+  </div>
+
+  <!-- Sizing Bar Chart -->
+  <div class="chart-card">
+    <h2>Sizing Overview</h2>
+    <canvas id="sizingChart" height="400"></canvas>
+  </div>
+
+</div>
+
+<script>
+  const qualityCtx = document.getElementById('qualityChart').getContext('2d');
+  const sizingCtx = document.getElementById('sizingChart').getContext('2d');
+  const statusDot = document.getElementById('statusDot');
+  const lastUpdateText = document.getElementById('last-update');
+
+  const qualityChart = new Chart(qualityCtx, {
+    type: 'pie',
+    data: {
+      labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'],
+      datasets: [{
+        label: 'Quality Distribution',
+        data: [],
+        backgroundColor: ['#16EEDC', '#049C0C', '#7836F4', '#F4368F', '#3672F4'],
+        borderWidth: 1
+      }]
+    },
+    options: { responsive: true }
+  });
+
+  const sizingChart = new Chart(sizingCtx, {
+    type: 'bar',
+    data: {
+      labels: ['O/S', '4X', '1XXX', '1XX', '1X', '1', '2', '3', '4', '5', 'U/S'],
+      datasets: [{
+        label: 'Sizing Count',
+        data: [],
+        backgroundColor: '#2196f3'
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  async function fetchAndUpdateCharts() {
+    statusDot.classList.remove('error');
+    statusDot.classList.add('blinking');
+    statusDot.title = "Updating: Fetching data...";
+
+    try {
+      const response = await fetch("http://localhost:8000/api/quality");
+      const res = await fetch('run-quality.json');
+      const data = await response.json();
+
+      const q = data.quality;
+      const weights = data.weights;
+      const s = data.sizing;
+
+      // Pie Chart
+      qualityChart.data.datasets[0].data = [q.Q1, q.Q2, q.Q3, q.Q4, q.Q5];
+      qualityChart.update();
+
+      // Quality Weights Table
+      document.getElementById("wQ1").textContent = weights.Q1 + " kg";
+      document.getElementById("wQ2").textContent = weights.Q2 + " kg";
+      document.getElementById("wQ3").textContent = weights.Q3 + " kg";
+      document.getElementById("wQ4").textContent = weights.Q4 + " kg";
+      document.getElementById("wQ5").textContent = weights.Q5 + " kg";
+      
+
+      // Sizing Bar Chart
+      sizingChart.data.datasets[0].data = [
+        s["O/S"], s["4X"], s["1XXX"], s["1XX"], s["1X"],
+        s["1"], s["2"], s["3"], s["4"], s["5"], s["U/S"]
+      ];
+      sizingChart.update();
+
+
+
+
+      // Show UI
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('charts').style.display = 'flex';
+
+      const now = new Date();
+      lastUpdateText.textContent = "Last updated: " + now.toLocaleString();
+
+      statusDot.classList.remove('blinking');
+      statusDot.title = "Idle: Waiting for next update";
+
+    } catch (err) {
+      console.error("API Error:", err);
+      document.getElementById('loading').textContent = "Failed to load data.";
+
+      statusDot.classList.remove('blinking');
+      statusDot.classList.add('error');
+      statusDot.title = "Error: Failed to fetch data!";
+    }
+  }
+
+  fetchAndUpdateCharts();
+  setInterval(fetchAndUpdateCharts, 10000);
+</script>
+
+</body>
+</html>

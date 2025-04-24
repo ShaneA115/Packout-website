@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historical Details</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <div class="Logo">Unipack</div>
+    <nav class="navigation"></nav>
+    <a href="home.html"><button class="back-btn">Back</button></a>
+  </header>
+
+  <div class="content" style="padding: 80px;">
+    <h2 id="run-title">Run Details</h2>
+
+    <table class="quality-table">
+      <thead>
+        <tr>
+          <th>Quality</th>
+          <th>%</th>
+          <th>Weight - kg</th>
+        </tr>
+      </thead>
+      <tbody id="quality-body">
+        <!-- Quality data will load here -->
+      </tbody>
+    </table>
+
+    <h2 style="margin-top: 60px;backdrop-filter: blur(10px);border-radius :10px;">Sizing Distribution</h2>
+    <div style="width: 100%; max-width: 1000px; margin-top: 20px;backdrop-filter: blur(10px);background-color: #e4e8e4;">
+      <canvas id="sizingChart" height="200"></canvas>
+    </div>
+    
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const run = params.get('run');
+    const date = params.get('date');
+    document.getElementById('run-title').textContent = `Run: ${run} (${date})`;
+
+    fetch('history.json')
+      .then(response => response.json())
+      .then(data => {
+        const match = data.find(item => item.run === run && item.date === date);
+
+        if (match) {
+          // Quality Table
+          const tbody = document.getElementById('quality-body');
+          if (match.quality && match.weights) {
+            tbody.innerHTML = '';
+            for (let i = 0; i < match.quality.length; i++) {
+              const row = `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${match.quality[i]}%</td>
+                  <td>${match.weights[i]}</td>
+                </tr>
+              `;
+              tbody.innerHTML += row;
+            }
+          }
+
+          // Sizing Chart
+          if (match.sizing) {
+            const ctx = document.getElementById('sizingChart').getContext('2d');
+            new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['O/S', '4X', '1XXX', '1XX', '1X', '1', '2', '3', '4', '5', 'U/S'],
+                datasets: [{
+                  label: 'Count',
+                  data: match.sizing,
+                  backgroundColor: '#4e73df',
+                  borderRadius: 5
+                }]
+              },
+              options: {
+                responsive: true,
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Count' }
+                  },
+                  x: {
+                    title: { display: true, text: 'Size Category' }
+                  }
+                }
+              }
+            });
+          }
+        } else {
+          document.getElementById('quality-body').innerHTML = `
+            <tr><td colspan="3">No data found for this run.</td></tr>
+          `;
+        }
+      });
+      
+  </script>
+</body>
+</html>

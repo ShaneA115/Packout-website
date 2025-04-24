@@ -1,0 +1,316 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+*{
+    margin: 0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: "Poppins",sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('unipacklogo.webp') no-repeat;
+    background-size: "";
+    background-position: center;
+
+}
+.wrapper {
+    width: 430px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(0,0,0,.2);
+    color: #000000;
+    border-radius: 10px;
+    padding: 30px 40px ;
+    background-size: cover;
+}
+
+.wrapper h1 {
+    font-size: 40px ;
+    text-align: center;
+}
+.wrapper .input-box {
+    position: relative;
+    width: 98%;
+    height: 50px;
+    margin: 30px 0;
+
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, .2);
+    border-radius: 40px;
+    font-size: 16px;
+    padding: 20px 45px 20px 20px;
+    color: #000000;
+
+}
+
+.input-box input::placeholder {
+    color: #000000;
+
+}
+.input-box i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+
+}
+
+.wrapper .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+
+}
+
+
+.remember-forgot label input {
+    accent-color:#000000 ;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #333030;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border:none;
+    outline: none;
+    border-radius:40px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1) ;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+.wrapper ,register-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+
+}
+
+.register-link p a {
+    color: #3d3a3a;
+    text-decoration: none;
+    font-weight: 600;
+
+}
+
+.register-link p a:hover {
+    text-decoration: underline;
+
+}
+
+header {
+    position: fixed;
+    top: 0px;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index:99;
+
+}
+.Logo {
+    width: 100px;
+    font-size: 2em;
+    user-select: none;
+}
+
+.navigation a {
+    position: relative;
+    font-size: 1.1em;
+    color: #000000;
+    text-decoration: none;
+    font-weight: 500;
+    margin-right: 30px;
+}
+
+.navbar a::after {
+    content: "";
+    position: absolute;
+    left:0;
+    bottom: -6px;
+    width: 100%;
+    height: 2px;
+    border-radius: 5px;
+    transform: translateY(10px);
+    transition: .5s;
+}
+
+.navbar a:hover::after {
+    transform: translateY(10px);
+
+}
+
+.btnLogout-popup {
+    
+    background-color: #fa4747;
+    font-weight: 100px;
+    border-radius: 5px;
+    height: 30px;
+    width: 60px;
+    background-size: cover;
+    border:none;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0,0,0,.1) ;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Modern Table Styling */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+}
+
+.styled-table thead tr {
+    background-color: #4CAF50;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #4CAF50;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #e2f7e2;
+}
+
+/* Modern button style for table actions */
+.goToQuality-btn {
+    background: #4CAF50;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+  }
+  .view-btn{
+    background: #4CAF50;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+  }
+  .close-btn {
+    cursor: pointer;
+    background: #e74c3c;
+    border: none;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 5px;
+    float: right;
+  }
+
+  .quality-table {
+    width: 100%;
+    max-width: 500px;
+    margin: 30px auto;
+    border-collapse: collapse;
+    font-size: 16px;
+    background: rgb(191, 226, 168);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+  
+  .quality-table th, .quality-table td {
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .quality-table th {
+    background-color: #4CAF50;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .quality-table tr:last-child td {
+    border-bottom: none;
+    backdrop-filter: blur(10px)
+  }
+  
+  .back-btn {
+    
+    background-color: #fa4747;
+    font-weight: 100px;
+    border-radius: 5px;
+    height: 30px;
+    width: 60px;
+    background-size: cover;
+    border:none;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0,0,0,.1) ;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+}
+
