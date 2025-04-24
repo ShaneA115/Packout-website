@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header>
+    <div class="Logo">Unipack</div>
+    <nav class="navigation">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+    </nav>
+    <a href="login.html"><button class="btnLogout-popup">Logout</button></a>
+  </header>
+
+  <div style="margin-top: 120px; width: 90%; max-width: 1200px;">
+    <h2 id="welcome-message">Welcome!</h2>
+
+    <div style="margin-top: 40px;">
+      <h2>Current Data</h2>
+      <table id="current-table" class="styled-table">
+        <thead>
+          <tr>
+            <th>Current Run</th>
+            <th>Current PUC</th>
+            <th>Orchard</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="current-table-body">
+          <!-- Current data will load here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 60px;">
+      <h2>Historical Data</h2>
+      <table id="history-table" class="styled-table">
+        <thead>
+          <tr>
+            <th>Run</th>
+            <th>PUC</th>
+            <th>Orchard</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="history-table-body">
+          <!-- Historical data will load here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Show username if available
+    const params = new URLSearchParams(window.location.search);
+    const run = params.get('run');
+    const date = params.get('date');
+    const username = params.get('username');
+    document.getElementById('welcome-message').textContent = username
+      ? `Welcome, ${username}!`
+      : 'Welcome, Guest!';
+
+    // Fetch Current Data
+    function loadCurrentData() {
+      fetch('data.json')
+        .then(response => response.json())
+        .then(data => {
+          const currentBody = document.getElementById("current-table-body");
+          currentBody.innerHTML = '';
+          data.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td data-label="Current Run">${item.run}</td>
+              <td data-label="Current PUC">${item.puc}</td>
+              <td data-label="Orchard">${item.orchard}</td>
+              <td data-label="Action">
+                <button class="goToQuality-btn" onclick="redirectToQualityPage('${item.run}')">View</button>
+              </td>`;
+            currentBody.appendChild(row);
+          });
+        });
+    }
+
+    function loadHistoryData() {
+      fetch('history.json')
+        .then(response => response.json())
+        .then(data => {
+          const historyBody = document.getElementById("history-table-body");
+          historyBody.innerHTML = '';
+          data.forEach(item => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td data-label="Run">${item.run}</td>
+              <td data-label="PUC">${item.puc}</td>
+              <td data-label="Orchard">${item.orchard}</td>
+              <td data-label="Date">${item.date}</td>
+              <td data-label="Action">
+                <button class="view-btn" onclick="redirectToHistoricalPage('${item.run}', '${item.date}')">View</button>
+              </td>`;
+            historyBody.appendChild(row);
+          });
+        });
+    }
+    
+    
+    // Navigation to current-quality.html
+    function redirectToQualityPage(run) {
+      window.location.href = `current-quality.html?run=${encodeURIComponent(run)}`;
+    }
+    // Add this function
+    function redirectToHistoricalPage(run, date) {
+      window.location.href = `historical.html?run=${encodeURIComponent(run)}&date=${encodeURIComponent(date)}`;
+    }
+    // Initial data load
+    loadCurrentData();
+    loadHistoryData();
+
+    // Auto-refresh every 10 seconds
+    setInterval(() => {
+      loadCurrentData();
+      loadHistoryData();
+    }, 10000);
+  </script>
+</body>
+</html>
